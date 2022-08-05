@@ -1,0 +1,29 @@
+.tasks .tasks_item {
+    min-width: 360px;
+    max-width: 365px;
+    min-height: 127px;
+    margin: 12px;
+    border: 2px solid #6495ED;
+    border-radius: 5px;
+}
+
+.tasks .tasks_item .tasks_item_data {
+    margin: 15px;
+}
+
+.tasks .tasks_item .tasks_item_name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.green {
+    color: green
+}
+
+.grey {
+    color: grey
+}
+
+.red {
+    color: red
+}
