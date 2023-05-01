@@ -30,25 +30,10 @@ const NewTask = ({active, setActive}) => {
         setFinishedAt('');
     }
 
-    // let responsibles = [
-    //     {
-    //         id: 1,
-    //         name: 'Данил',
-    //         lastName: 'Щепелин',
-    //         middleName: 'Сергеевич'
-    //     },
-    //     {
-    //         id: 2,
-    //         name: 'Андрей',
-    //         lastName: 'Андреев',
-    //         middleName: 'Андреевич'
-    //     },
-    // ];
-
     return (
         <div className={active ? "modal active" : "modal"} onClick={() => setActive(false)}>
             <div className={active ? "modal_content active" : "modal_content"} onClick={(event) => event.stopPropagation()}>
-                <form action='POST' className='new_task_form'>
+                <form className='new_task_form'>
                     <h2>Новая задача</h2>
 
                     <div className="new_task_form_box">

@@ -3,6 +3,7 @@ const { makeObservable, reaction, flow, observable, action, computed } = require
 export class AuthStore {
     @observable currentSession = localStorage.getItem('SessionID');
     @observable loginUser = '';
+    @observable.ref errors = [];
 
     constructor() {
         makeObservable(this);
@@ -14,9 +15,14 @@ export class AuthStore {
                     localStorage.setItem('SessionID', currentSession);
                 } else {
                     localStorage.removeItem('SessionID');
+                    localStorage.removeItem('login_user');
                 }
             }
         )
+    }
+
+    @computed get isNotValidate() {
+        return Boolean(this.errors);
     }
 
     @flow *getUser(login, password) {
@@ -29,32 +35,13 @@ export class AuthStore {
             credentials: 'include',
             body: JSON.stringify({ login, password }),
         });
-
-        if (response.status == 301) {
-            alert('Неверный пароль');
-            return;
+        const {sessionID, loginUser, message} = yield response.json();
+        if (message) {
+            this.errors['message'] = yield message;
         }
-        if (response.status == 303) {
-            alert('Введите логин и пароль');
-            return;
-        }
-        if (response.status == 304) {
-            alert('Такого пользователя не существует');
-            return;
-        }
-
-        if (response.status >= 400) {
-            console.log('err');
-            return;
-        }
-        const {sessionID, loginUser} = yield response.json();
+        localStorage.setItem('login_user', loginUser);
         this.loginUser = loginUser;
         this.currentSession = sessionID;
-
-        // if (this.loginUser !== login) {
-        //     alert("Такого логина не существует");
-        //     return;
-        // }
     }
 
     @action logout() {
@@ -66,7 +53,6 @@ export class AuthStore {
             },
             credentials: 'include'
         });
-
         this.currentSession = null;
     }
 

@@ -9,7 +9,7 @@ const Tasks = () => {
     const {UsersStore} = useContext(MainStoreContext);
 
     const [responsible, setResponsible] = useState('');
-    const [date, setDate] = useState('');
+    const [finishDate, setFinishDate] = useState('');
     
     useEffect(
         () => {
@@ -22,58 +22,69 @@ const Tasks = () => {
     return (
         <div className='tasks'>
             <div className='filter'>
-                {/* <div className='date'>
-                    <div>По дате</div>
-                    <select defaultValue={date} onClick={event => setDate(event.target.value)}>
-                        <option value={new Date().getDay()}>На сегодня</option>
-                        <option value={new Date().getDay() + 7}>На неделю</option>
-                        <option value={new Date().getDay() }>На будущее</option>
-                    </select>
-                    <button onClick={() => {
-                        TasksStore.setResponsible(responsible);
-                    }}>Применить фильтр</button>
-
-                    <button onClick={() => {
-                        TasksStore.removeFilter('');
-                    }}>Сбросить фильтр</button>
-                </div> */}
-                
                 <div className='responsibles'>
-                    <div>Ответственный</div>
-                    <select defaultValue='' onClick={event => setResponsible(event.target.value)}>
-                        <option value='' disabled>Выберите ответственного</option>
-                        {
-                            UsersStore.responsibles?.map(element => {
-                                return <option key={element.id} value={element.id}>{element.lastName} {element.name} {element.middleName}</option>
-                            })
-                        }
+                    <div>По дате</div>
+                    <select
+                        className='date_filter'
+                        defaultValue=''
+                        onClick={event => setFinishDate(event.target.value)}>
+                        <option value='' disabled selected>Выберите дату</option>
+                        <option value={'today'}>На сегодня</option>
+                        <option value={'week'}>На неделю</option>
+                        <option value={'moreThanWeek'}>На будущее</option>
                     </select>
+                    {
+                        UsersStore.isLeader ?
+                            <>
+                                <div>Ответственный</div>
+                                <select
+                                    className='responsible_filter'
+                                    defaultValue=''
+                                    onClick={event => setResponsible(event.target.value)}>
+                                    <option value='' disabled selected>Выберите ответственного</option>
+                                    {
+                                        UsersStore.responsibles?.map(element => {
+                                            return <option key={element.id} value={element.id}>{element.lastName} {element.name} {element.middleName}</option>
+                                        })
+                                    }
+                                </select>
+                            </> :
+                            <div></div>
+                    }
                     <button onClick={() => {
-                        TasksStore.setResponsible(responsible);
+                        TasksStore.getTasks(responsible, finishDate);
                     }}>Применить фильтр</button>
 
                     <button onClick={() => {
-                        TasksStore.removeFilter('');
+                        let selectDate = document.querySelector('.date_filter');
+                        let selectResponsible = document.querySelector('.responsible_filter');
+                        TasksStore.getTasks();
+                        selectDate.options[0].selected = true;
+                        selectResponsible.options[0].selected = true;
+                        setResponsible('');
+                        setFinishDate('');
                     }}>Сбросить фильтр</button>
                 </div>
             </div>
             
             <div className='tasks_items'>
                 {
-                    TasksStore.filtered?.map(element => {
-                        return (
-                            <Task 
-                                key={element.id}
-                                id={element.id}
-                                task={element.task}
-                                priority={element.priority}
-                                finishedAt={element.finishedAt}
-                                responsibleName={element.responsibleName}
-                                responsipbleLastName={element.responsipbleLastName}
-                                responsibleMiddleName={element.responsibleMiddleName}
-                                status={element.status}    
-                            /> 
-                        );   
+                    TasksStore.isEmpty ?
+                        <div className='empty'>Задач не найдено</div> :
+                        TasksStore.allTasksData?.map(element => {
+                            return (
+                                <Task
+                                    key={element.id}
+                                    id={element.id}
+                                    task={element.task}
+                                    priority={element.priority}
+                                    finishedAt={element.finishedAt}
+                                    responsibleName={element.responsibleName}
+                                    responsipbleLastName={element.responsipbleLastName}
+                                    responsibleMiddleName={element.responsibleMiddleName}
+                                    status={element.status}
+                                />
+                            );
                     })
                 }
             </div>

@@ -10,7 +10,6 @@ const Task = (props) => {
 
     const openModal = () => {
         setModalActive(true);
-        
     }
 
     return (
@@ -22,9 +21,9 @@ const Task = (props) => {
                 }}>
                 <div className='tasks_item_data'>
                     <div className={
-                        props.status == 'К выполнению' && new Date(props.finishedAt) < new Date() || props.status == 'Выполяется' && new Date(props.finishedAt) < new Date() ?
+                        props.status === 'К выполнению' && new Date(props.finishedAt) < new Date() || props.status === 'Выполяется' && new Date(props.finishedAt) < new Date() ?
                         'tasks_item_name red' :
-                            props.status == 'Выполнена' ?
+                            props.status === 'Выполнена' ?
                             'tasks_item_name green' :
                             'tasks_item_name grey'
                     }>

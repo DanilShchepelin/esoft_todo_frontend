@@ -65,3 +65,14 @@
 
     background-color: #6495ed;
 }
+
+input {
+    border: none;
+    outline: none;
+}
+
+.green_modal {
+    color: green;
+    font-size: 14px;
+    text-align: center;
+}

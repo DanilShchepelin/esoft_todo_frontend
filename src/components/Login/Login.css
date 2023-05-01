@@ -47,3 +47,15 @@
 
     background-color: #6495ed;
 }
+
+.login_form .login_form_box .error_message {
+    color: red;
+    font-size: 12px;
+    text-align: center;
+}
+
+.login_form .error_message {
+    color: red;
+    font-size: 12px;
+    text-align: center;
+}

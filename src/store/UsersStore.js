@@ -7,6 +7,10 @@ export class UsersStore {
         makeObservable(this);
     }
 
+    @computed get isLeader() {
+        return this.responsibles?.length > 0;
+    }
+
     @flow *getResponsibles() {
         const response = yield fetch('http://localhost:3001/api/users', {
             method: 'GET',
@@ -15,11 +19,6 @@ export class UsersStore {
             },
             credentials: 'include'
         });
-
-        if (response.status >= 400) {
-            console.log('err');
-            return;
-        }
 
         const {responsibles} = yield response.json();
 

@@ -2,32 +2,28 @@ const { makeObservable, reaction, flow, observable, action, computed } = require
 
 export class TasksStore {
     @observable allTasksData = [];
-    @observable taskData = null;
-    @observable responsible = '';
+    @observable taskData = [];
 
     constructor() {
         makeObservable(this);
     }
 
-    @action setResponsible(value) {
-        this.responsible = value;
-    } 
+    // @action setResponsible(value) {
+    //     this.responsible = value;
+    // }
+    //
+    // @action removeFilter(value) {
+    //     this.responsible = value;
+    // }
 
-    @action removeFilter(value) {
-        this.responsible = value;
+    @computed get isEmpty() {
+        return this.allTasksData.length === 0;
     }
 
-    @computed get filtered() {
-        let filteredData = [];
-        if (this.responsible == '') {
-            filteredData = this.allTasksData;
-        } else {
-            filteredData = this.allTasksData.filter(
-                item => item['responsible'] == this.responsible
-            );
-        }
-
-        return filteredData
+    @computed get isAuthor() {
+        let userId = localStorage.getItem('login_user');
+        let creatorId = this.taskData?.creator;
+        return userId === creatorId?.toString();
     }
 
 
@@ -43,22 +39,25 @@ export class TasksStore {
         });
     }
 
-    @flow *getTasks() {
-        const response = yield fetch('http://localhost:3001/api/tasks', {
+    @flow *getTasks(responsible, finishDate) {
+        let url = 'http://localhost:3001/api/tasks';
+        if (responsible) {
+            url = `http://localhost:3001/api/tasks?responsible=${responsible}`
+        }
+        if (finishDate) {
+            url = `http://localhost:3001/api/tasks?finishDate=${finishDate}`
+        }
+        if (responsible && finishDate) {
+            url = `http://localhost:3001/api/tasks?responsible=${responsible}&finishDate=${finishDate}`
+        }
+        const response = yield fetch(url, {
             method: 'GET',
             headers: {
                 'Access-Control-Allow-Origin': '*'
             },
             credentials: 'include'
         });
-
-        if (response.status >= 400) {
-            console.log('err');
-            return;
-        }
-
         const {tasks} = yield response.json();
-
         this.allTasksData = tasks;
     }
 
@@ -81,7 +80,7 @@ export class TasksStore {
         this.taskData = task;
     }
 
-    @flow *updateTask(taskId, status) {
+    @flow *updateTask(taskId, task, description, finishedAt, priority, status, responsible) {
         yield fetch('http://localhost:3001/api/tasks/' + taskId, {
             method: 'PUT',
             headers: {
@@ -89,7 +88,7 @@ export class TasksStore {
                 'Access-Control-Allow-Origin': '*'
             },
             credentials: 'include',
-            body: JSON.stringify({ status })
+            body: JSON.stringify({ task, description, finishedAt, priority, status, responsible })
         });
     }
 }
